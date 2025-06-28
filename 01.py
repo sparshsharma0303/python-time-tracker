@@ -1,14 +1,29 @@
 import sqlite3
 import datetime
+conn = sqlite3.connect("database.db")
+cursor = conn.cursor()
+
+cursor.execute(''' CREATE TABLE IF NOT EXISTS time_tracker(
+id INT PRIMARY KEY AUTO INCREMENT,
+name TEXT NOT NULL,
+date TEXT NOT NULL,
+start_time TEXT NOT NULL,
+end_time TEXT NOT NULL
+)'''
+)
+# ----------------------------------------------------------------------------------------------------------------------------------------------
 
 def show_list():
-    pass
+    res = cursor.execute("SELECT * FROM time_tracker")
+    for row in res:
+        print(row)
 
-def add_task():
-    pass
+def add_task(name,date,start_time,end_time):
+    cursor.execute("INSERT INTO time_tracker (name , date, start_time, end_time) VALUES(?,?,?,?)",(name,date,start_time,end_time))
+    print("data entered succesfully")
 
-def update_task():
-    pass
+def update_task(id,name,date,start_time,end_time):
+    cursor.execute("UPDATE time_tracker name = ?,date = ?, start_time = ?, end_time = ?) WHERE id = ?",(name,date,start_time,end_time,id))
 
 def track_task():
     pass
@@ -29,14 +44,25 @@ def main():
                 show_list()
 
             case '2':
-                add_task()
+                name = input("enter the task name")
+                date = input("enter the date in format dd-mm-yyyy")
+                start_time = input("enter the start time in format hh:mm")
+                end_time = input("enter the end time in format hh:mm")
+                add_task(name,date,start_time,end_time)
 
             case '3':
-                update_task()
+                id = input("enter the id of the task you want to update")
+                name = input("enter the new task name")
+                date = input("enter the new date in format dd-mm-yyyy")
+                start_time = input("enter the new start time in format hh:mm")
+                end_time = input("enter the new end time in format hh:mm")
+                update_task(id,name,date,start_time,end_time)
 
             case '4':
                 track_task()
 
             case '5':
                 break
-  
+
+if __name__ == "__main__":
+    main()
