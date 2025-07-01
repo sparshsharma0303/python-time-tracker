@@ -13,13 +13,18 @@ start_time TEXT NOT NULL,
 end_time TEXT NOT NULL
 )'''
 )
-# ----------------------------------------------------------------------------------------------------------------------------------------------
+# -----------------------------------------------------------------------------------------------------------------
+def task_exists(task_id):
+    cursor.execute("SELECT 1 FROM time_tracker WHERE id = ?", (task_id,))
+    result = cursor.fetchone()
+    return result is not None
+# -----------------------------
 def show_list():
     res = cursor.execute("SELECT * FROM time_tracker")
     for row in res:
         print(row)
         print('-'*50)
-        time.sleep(0.5)
+        time.sleep(0.2)
 
     print('*'*50)
 # ------------------------------------------------------------------------------------------------------
@@ -28,7 +33,7 @@ def show_list():
 def add_task(name,date,start_time,end_time):
     cursor.execute("INSERT INTO time_tracker (name , date, start_time, end_time) VALUES(?,?,?,?)",(name,date,start_time,end_time))
     conn.commit()
-    time.sleep(0.5)
+    time.sleep(0.2)
     print("data entered succesfully")
     print('*'*50)
 
@@ -37,17 +42,21 @@ def add_task(name,date,start_time,end_time):
 def update_task(id,name,date,start_time,end_time):
     cursor.execute("UPDATE time_tracker SET name = ?,date = ?, start_time = ?, end_time = ? WHERE id = ?",(name,date,start_time,end_time,id))
     conn.commit()
-    time.sleep(0.5)
+    time.sleep(0.2)
     print('*'*50)
 
 # ------------------------------------------------------------------------------------------------------
 
 
 def delete_task(id):
+    val = task_exists(id)
     cursor.execute("DELETE FROM time_tracker WHERE id = ?",(id,))
     conn.commit()
-    time.sleep(0.5)
-    print("task deleted succefully")
+    time.sleep(0.2)
+    if(val):
+        print("task deleted succefully")
+    else:
+        print("task of given task id does not exists\n")
     print('*'*50)
 
 # ------------------------------------------------------------------------------------------------------
@@ -58,14 +67,14 @@ def track_task(name):
     if not row :
         print("no record found")
         print('*'*50)
-        time.sleep(0.5)
+        time.sleep(0.2)
     else:
-        print(f"your time routine for {name} is as follow :")
+        print(f"your time routine for {name} is was follow :")
         print('-'*50)
         for da, st , et in row:
             print(f"on {da} start time: {st} and end time: {et}")
             print('-'*50)
-            time.sleep(0.5)
+            time.sleep(0.2)
         
     print('*'*50)
 
@@ -76,15 +85,15 @@ def track_day(date):
     if not res :
         print("no record found")
         print('*'*50)
-        time.sleep(0.5)
+        time.sleep(0.2)
     else:
         print("your record for date {date} is:\n")
         print('-'*50)
-        time.sleep(0.5)
+        time.sleep(0.2)
         for row in res :
             print(row)
             print('-'*50)
-            time.sleep(0.5)
+            time.sleep(0.2)
 
 # -------------------------------------------------------------------------------------------------------------
 
@@ -98,7 +107,8 @@ def total_time_spent(task_name):
         accumulator = et_obj-st_obj
         total_duration += accumulator
     
-    print(f"the total time you spent doing{task_name} is {total_duration}")
+    print(f"the total time you spent doing{task_name} is {total_duration}\n")
+    print('*'*50)
     
 
 # -------------------------------------------------------------------------------------------------------------
@@ -107,22 +117,22 @@ def total_time_spent(task_name):
 def main():
     while(True):
         print("enter 1 to show complete list:\n")
-        time.sleep(0.25)
+        time.sleep(0.1)
         print("enter 2 to add tasks:\n")
-        time.sleep(0.25)
+        time.sleep(0.1)
         print("enter 3 to update task:\n")
-        time.sleep(0.25)
+        time.sleep(0.1)
         print("enter 4 to track specific task:\n")
-        time.sleep(0.25)
+        time.sleep(0.1)
         print("enter 5 to fetch record of specific day:\n")
-        time.sleep(0.25)
+        time.sleep(0.1)
         print("enter 6 to delete:\n")
-        time.sleep(0.25)
+        time.sleep(0.1)
         # print("enter 7 to track today:\n")
-        time.sleep(0.25)
-        print("enter 7 to fetch total time spent doing the task ")
-        time.sleep(0.25)
-        print("enter 8 to break ")
+        time.sleep(0.1)
+        print("enter 7 to fetch total time spent doing the task:\n")
+        time.sleep(0.1)
+        print("enter 8 to break:\n")
         
     
         choice = input("enter your choice:\n")
@@ -133,12 +143,12 @@ def main():
 
             case '2':
                 name = input("enter the task name:\n")
-                time.sleep(0.5)
+                time.sleep(0.2)
                 while True:
                     try:
                         date = input("enter the date in format dd-mm-yyyy:\n")
                         date_obj = datetime.strptime(date,"%d-%m-%Y").date()
-                        time.sleep(0.5)
+                        time.sleep(0.2)
                         break
                     except ValueError:
                         print("enter the correct date,")
@@ -149,7 +159,7 @@ def main():
                         start_time = input("enter the start time in format hh:mm:\n")
                         st_format = datetime.strptime(start_time, "%H:%M").time()
                         print('*'*50)
-                        time.sleep(0.5)
+                        time.sleep(0.2)
                         break
                     except ValueError:
                         print("enter the time in correct format,")
@@ -178,17 +188,17 @@ def main():
 
             case '3':
                 id = input("enter the id of the task you want to update:\n")
-                time.sleep(0.5)
+                time.sleep(0.2)
 
                 name = input("enter the new task name:\n")
-                time.sleep(0.5)
+                time.sleep(0.2)
 
                 print('*'*50)
                 while True:
                     try:
                         date = input("enter the new date in format dd-mm-yyyy:\n")
                         date_obj = datetime.strptime(date,"%d-%m-%Y").date()
-                        time.sleep(0.5)
+                        time.sleep(0.2)
                         break
                     except ValueError:
                         print("enter the correct date,")
@@ -197,17 +207,17 @@ def main():
                         start_time = input("enter the new start time in format hh:mm:\n")
                         st_format = datetime.strptime(start_time, "%H:%M").time()
                         print('*'*50)
-                        time.sleep(0.5)
+                        time.sleep(0.2)
                         break
                     except:
                         print("please enter correct time,")
                         
                 while True:
                     try:
-                        end_time = input("enter the new pyend time in format hh:mm:\n")
+                        end_time = input("enter the new end time in format hh:mm:\n")
                         et_format = datetime.strptime(end_time, "%H:%M").time()
                         print('*'*50)
-                        time.sleep(0.5)
+                        time.sleep(0.2)
                         break
 
                     except:
@@ -219,7 +229,7 @@ def main():
                         print("ending timing must be after start time:\n")
                         end_time = input("enter the end time in format hh:mm:\n")
                         print('*'*50)
-                        time.sleep(0.5)
+                        time.sleep(0.2)
                         et_format = datetime.strptime(end_time, "%H:%M").time()
                     else:
                         break
@@ -231,23 +241,23 @@ def main():
                 print('*'*50)
                 name = input("enter the name of task you want to track:\n")
                 print('*'*50)
-                time.sleep(0.5)
+                time.sleep(0.2)
                 track_task(name)
             case '5':
                 while True:
                     try:
                         date = input("enter the date in dd-mm-yyyy format you want to fetch data of:\n")
                         date_obj = datetime.strptime(date,"%d-%m-%Y").date()
-                        time.sleep(0.5)
+                        time.sleep(0.2)
                         break
                     except ValueError:
                         print("enter the correct date,")
-                time.sleep(0.5)
+                time.sleep(0.2)
                 track_day(date)
             case '6':
                 id = input("enter the id of task you want to delete:\n")
                 print('*'*50)
-                time.sleep(0.5)
+                time.sleep(0.2)
                 delete_task(id)
 
             case '7':
